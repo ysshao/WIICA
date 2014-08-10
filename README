@@ -1,0 +1,93 @@
+
+0. Preliminary
+This tool is based on LLVM. You have to install LLVM first, then -- 
+1) Download our LLVM instrumentation pass and set enviroment variable TRACER_HOME to be the path of the pass.
+2) Set enviroment variable WORKLOAD to be the function names you want to instrument, multiple functions seperated by comma. Only functions in the list can be instrumented.
+One can edit setenv.sh then do 
+	source setenv.sh
+everytime you run wiica. Or One can put those path in ~/.bashrc.
+
+--------------------------------------------------------------------------------------------------------------
+1. Files
+1) run_wiica.py
+	The interface of wiica.
+	usage: run_wiica.py [-h] [--directory DIRECTORY] [--kernel KERNEL]
+                    [--source SOURCE]
+                    [--arguments [ARGUMENTS [ARGUMENTS ...]]]
+                    [--test_file TEST_FILE]
+                    [--analysis_types [{opcode,staticinst,memory,branch,basicblock,register} [{opcode,staticinst,memory,branch,basicblock,register} ...]]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --directory DIRECTORY
+                        ABSOLUTE directory of the benchmark
+  --kernel KERNEL       benchmark to analyze. If the benchmark is one of the
+                        algorithms of the kernel, use kernel.algorithm instead
+  --source SOURCE       the name of source file, e.g. fft, md, etc.
+  --arguments [ARGUMENTS [ARGUMENTS ...]]
+                        the list of arguments to run the program. If no argument, put non
+  --test_file TEST_FILE
+                        test file. If no test file, put non
+  --analysis_types [{opcode,staticinst,memory,branch,basicblock,register} [{opcode,staticinst,memory,branch,basicblock,register} ...]]
+                        Type of analysis. Separate multiple values with
+                        spaces. The supported analysis types are shown.
+
+2) process_trace.py
+	For those benchmarks with "llvm.memset" instrinsic. It replaces "llvm.memset" with several non-intrinsic instructions.
+
+3) SHOC/
+	We distribute wiica with SHOC Benchmark Suite. We use the benchmarks as examples to show how to run wiica.
+
+3) Other files are as their names indicating.
+
+
+--------------------------------------------------------------------------------------------------------------
+2. Run wiica
+
+	Use run_wiica.py to characterize your benchmark. An example to run wiica is:
+
+	python run_wiica.py --directory /your/path/to/wiica/SHOC/fft/ --kernel fft --source fft --arguments non --test_file non --analysis_types opcode staticinst memory branch basicblock register
+
+
+
+--------------------------------------------------------------------------------------------------------------
+3.Output
+	During execution, readable characterization data will be printed. Serverl files are also generated to store the results. 
+
+The files are:
+	(These files are generated from analysis.py)
+	[bench name]_opcode_profile
+	[bench name]_staticinst_profile 
+	[bench name]_footprint			Memory footprint
+	[bench name]_mem_entropy		
+	[bench name]_branch_entropy		
+	[bench name]_basicblock_profile		
+
+	(These files are generated from mem_analysis.py)
+	[bench name]_spatial_locality
+	[bench name]_temporal_locality
+	[bench name]_stride_profile		Used to compute spatial locality
+	[bench name]_reuse_profile		Used to compute temporal locality
+
+	(These files are generated from reg_analysis.py)
+	[bench name]_reg_degree			total read / total write
+	[bench name]_reg_distribution		dependency distance distribution
+	[bench name]_reg_lifetime		the distance (between when the register is created with when it is used for the last time) distribution
+	[bench name]_reg_number			The dynamic register number needed at each cycle (assume 1 cycle / instruction)
+	[bench name]_reg_maxn			The maximun number of registers needed by the program in the whole running process, which is the minimun requirement to run the program
+
+--------------------------------------------------------------------------------------------------------------
+
+4. Bug report
+
+Please email to archbugreport@gmail.com, titled "wiica_"+key words.
+
+--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
+
+Yu Emma Wang
+VLSI-Arch group
+Harvard University
+
+July 26, 2014
+
