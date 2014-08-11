@@ -42,11 +42,11 @@ International Symposium on Performance Analysis of Systems and Software
 
 =================================================================
 1. Run WIICA:
-After you build LLVM-Tracer, you can use example SHOC programs in the SHOC
-director to run WIICA. 
+After you build LLVM-Tracer, you need to specify the function names you want to instrument in the programs to run in environment variable WORKLOAD. You can use example SHOC programs in the SHOC
+director to run WIICA. Here we provide all the function names in setenv.sh. 
 
 An example to run wiica is:
-	
+  source setenv.sh
   cd scripts
   python run_wiica.py --directory /your/path/to/wiica/SHOC/fft/ --kernel fft --source fft --arguments non --analysis_types memory 
 
@@ -76,10 +76,11 @@ optional arguments:
 
 2) compile.py
   Compiling the program with LLVM-Tracer to generate a dynamic LLVM IR trace. 
-	*process_trace.py
+
+3) process_trace.py
     For those benchmarks with "llvm.memset" instrinsic. It replaces "llvm.memset" with several non-intrinsic instructions.
 
-3) analysis.py
+4) analysis.py
    Performing opcode,staticinst,memory,branch,basicblock,register analysis.
    Opcode: Opcode Breakdown into Compute, Memory, and Branch
    StaticInst: Number of dynamic executions for each static instruction, sorted
@@ -88,14 +89,15 @@ optional arguments:
    Branch: Branch Entropy[Shao2013]
    BasicBlock: Size and number of dynamic executions of each basic block
 
-4) mem_analysis.py
+5) mem_analysis.py
    Spatial Locality Score, see [Weinberg2005] for more details. 
    Temporal Locality Scor, see [Weinberg2005] for more details. 
 
-5) reg_analysis.py
-   Register Degrees:FIXME
-   Register Lifetime:FIXME
-   Register Number:FIXME
+6) reg_analysis.py
+   Register Degrees: The averarge use of registers, equals to the total number of register read divided by the total number of register write, see [Franklin1992] for more details.
+   Register Distribution: The distribution of the register dependency distance.
+   Register Lifetime: The distribution of the distance between the creation and the last use of registers, see [Franklin1992] for more details.
+   Register Number: The number of register required at a certain point. We assume the application is executed 1 instruction per cycle.
 
 =================================================================
 2.WIICA Outputs:
@@ -120,7 +122,7 @@ optional arguments:
 	[bench name]_reg_distribution		dependency distance distribution
 	[bench name]_reg_lifetime		the distance (between when the register is created with when it is used for the last time) distribution
 	[bench name]_reg_number			The dynamic register number needed at each cycle (assume 1 cycle / instruction)
-	[bench name]_reg_maxn			The maximun number of registers needed by the program in the whole running process, which is the minimun requirement to run the program
+	[bench name]_reg_maxn			The maximun number in [bench name]_reg_number, which is the minimun number of registers needed to run the program
 
 =================================================================
 4. Feedback
@@ -130,7 +132,7 @@ comments.
 
 =================================================================
 
-Yu Emma Wang
+Yu Emma Wang, Sophia Yakun Shao
 VLSI-Arch group
 Harvard University
 July 26, 2014
@@ -143,3 +145,6 @@ Quantifying Locality in the Memory Access Patterns of HPC Applications, SC, 2005
 [Shao2013] Y.S. Shao and D. Brooks.
 ISA-Independent Workload Characterization and its Implications for Specialized
 Architecture, ISPASS, 2013
+[Franklin1992] Franklin, M., & Sohi, G. S. 
+Register traffic analysis for streamlining inter-operation communication in fine-grain parallel processors.
+In ACM SIGMICRO Newsletter (Vol. 23, No. 1-2, pp. 236-245). IEEE Computer Society Press, 1992.

@@ -25,8 +25,7 @@ def run(directory,
     arguments = []
 
   compile.main(directory, kernel, source, arguments)
-  if kernel == "sort.radix":
-    process_trace.main(directory, kernel)
+  process_trace.main(directory, kernel)
   inst_results = analysis.main(directory, kernel, analysis_types)
   if 'memory' in analysis_types:
     mem_results = mem_analysis.main(directory, kernel)
@@ -39,7 +38,7 @@ def run(directory,
 def main():
   print "run_wiica"
   parser = argparse.ArgumentParser()
-  parser.add_argument('--directory', help='directory of the benchmark')
+  parser.add_argument('--directory', help='absolute directory of the benchmark')
   parser.add_argument('--kernel', help='benchmark to analyze. If the benchmark is one of the algorithms of the kernel, use kernel.algorithm instead')
   parser.add_argument('--source', help='the name of source file, e.g. fft, md, etc.')
   parser.add_argument('--arguments', help='the list of arguments to run the program', nargs="*")
