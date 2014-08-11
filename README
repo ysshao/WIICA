@@ -19,8 +19,9 @@ International Symposium on Performance Analysis of Systems and Software
    LLVM-Tracer is an LLVM compiler pass that instruments code in LLVM
    machine-independent IR. It prints out a dynamic trace of your program, which
    then be take as input for WIICA (and Aladdin.)
-   You can download LLVM-Tracerhere:
-   [FIXME:LINK]
+   
+   You can download LLVM-Tracer from here:
+   [https://github.com/ysshao/LLVM-Tracer]
    
    To build LLVM-Tracer:
    1. Set `LLVM_HOME` to where you installed LLVM
