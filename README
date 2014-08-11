@@ -1,14 +1,56 @@
+WIICA: Workload ISA-Independent Characterization for Applications
+=================================================================
+WIICA is a workload characterization tool to characterize the ISA-independent
+characteristics of applications in the context of specialized architectures.  
 
-0. Preliminary
-This tool is based on LLVM. You have to install LLVM first, then -- 
-1) Download our LLVM instrumentation pass and set enviroment variable TRACER_HOME to be the path of the pass.
-2) Set enviroment variable WORKLOAD to be the function names you want to instrument, multiple functions seperated by comma. Only functions in the list can be instrumented.
-One can edit setenv.sh then do 
-	source setenv.sh
-everytime you run wiica. Or One can put those path in ~/.bashrc.
+If you use WIICA in your research, please cite:
 
---------------------------------------------------------------------------------------------------------------
-1. Files
+ISA-Independent Workload Characterization and its Implications for Specialized
+Architectures, 
+Yakun Sophia Shao and David Brooks, 
+International Symposium on Performance Analysis of Systems and Software
+(ISPASS), April 2013
+
+==================================================================
+0. Build WIICA
+
+1) LLVM 3.4 and Clang 3.4 64-bit
+2) LLVM IR Trace Profiler (LLVM-Tracer)
+   LLVM-Tracer is an LLVM compiler pass that instruments code in LLVM
+   machine-independent IR. It prints out a dynamic trace of your program, which
+   then be take as input for WIICA (and Aladdin.)
+   You can download LLVM-Tracerhere:
+   [FIXME:LINK]
+   
+   To build LLVM-Tracer:
+   1. Set `LLVM_HOME` to where you installed LLVM
+      ```
+      export LLVM_HOME=/your/path/to/llvm
+      export PATH=$LLVM_HOME/bin/:$PATH
+      export LD_LIBRARY_PATH=$LLVM_HOME/lib/:$LD_LIBRARY_PATH
+      ```
+   2. Go to where you put LLVM-Tracer source code
+
+      ```
+      cd /path/to/LLVM-Tracer
+      cd /path/to/LLVM-Tracer/full-trace
+      make
+      cd /path/to/LLVM-Tracer/profile-func
+      make
+      ```
+
+=================================================================
+1. Run WIICA:
+After you build LLVM-Tracer, you can use example SHOC programs in the SHOC
+director to run WIICA. 
+
+An example to run wiica is:
+	
+  python run_wiica.py --directory /your/path/to/wiica/SHOC/fft/ --kernel fft --source fft --arguments non --analysis_types memory 
+
+=================================================================
+
+Related scripts:
 1) run_wiica.py
 	The interface of wiica.
 	usage: run_wiica.py [-h] [--directory DIRECTORY] [--kernel KERNEL]
@@ -25,36 +67,38 @@ optional arguments:
                         algorithms of the kernel, use kernel.algorithm instead
   --source SOURCE       the name of source file, e.g. fft, md, etc.
   --arguments [ARGUMENTS [ARGUMENTS ...]]
-                        the list of arguments to run the program. If no argument, put non
-  --test_file TEST_FILE
-                        test file. If no test file, put non
+                        the list of arguments to run the program. If no argument, put "non"
   --analysis_types [{opcode,staticinst,memory,branch,basicblock,register} [{opcode,staticinst,memory,branch,basicblock,register} ...]]
                         Type of analysis. Separate multiple values with
                         spaces. The supported analysis types are shown.
 
-2) process_trace.py
-	For those benchmarks with "llvm.memset" instrinsic. It replaces "llvm.memset" with several non-intrinsic instructions.
+2) compile.py
+  Compiling the program with LLVM-Tracer to generate a dynamic LLVM IR trace. 
+	*process_trace.py
+    For those benchmarks with "llvm.memset" instrinsic. It replaces "llvm.memset" with several non-intrinsic instructions.
 
-3) SHOC/
-	We distribute wiica with SHOC Benchmark Suite. We use the benchmarks as examples to show how to run wiica.
+3) analysis.py
+   Performing opcode,staticinst,memory,branch,basicblock,register analysis.
+   Opcode: Opcode Breakdown into Compute, Memory, and Branch
+   StaticInst: Number of dynamic executions for each static instruction, sorted
+               by the dynamic counts
+   Memory: Memory Footprint, Memory Global/Local Entropy[Shao2013]
+   Branch: Branch Entropy[Shao2013]
+   BasicBlock: Size and number of dynamic executions of each basic block
 
-3) Other files are as their names indicating.
+4) mem_analysis.py
+   Spatial Locality Score, see [Weinberg2005] for more details. 
+   Temporal Locality Scor, see [Weinberg2005] for more details. 
 
+5) reg_analysis.py
+   Register Degrees:FIXME
+   Register Lifetime:FIXME
+   Register Number:FIXME
 
---------------------------------------------------------------------------------------------------------------
-2. Run wiica
+=================================================================
+2.WIICA Outputs:
+	Stats files are generated to store the results including:
 
-	Use run_wiica.py to characterize your benchmark. An example to run wiica is:
-
-	python run_wiica.py --directory /your/path/to/wiica/SHOC/fft/ --kernel fft --source fft --arguments non --test_file non --analysis_types opcode staticinst memory branch basicblock register
-
-
-
---------------------------------------------------------------------------------------------------------------
-3.Output
-	During execution, readable characterization data will be printed. Serverl files are also generated to store the results. 
-
-The files are:
 	(These files are generated from analysis.py)
 	[bench name]_opcode_profile
 	[bench name]_staticinst_profile 
@@ -76,18 +120,22 @@ The files are:
 	[bench name]_reg_number			The dynamic register number needed at each cycle (assume 1 cycle / instruction)
 	[bench name]_reg_maxn			The maximun number of registers needed by the program in the whole running process, which is the minimun requirement to run the program
 
---------------------------------------------------------------------------------------------------------------
+=================================================================
+4. Feedback
 
-4. Bug report
+Feel free to email to archbugreport@gmail.com if you have any questions or
+comments. 
 
-Please email to archbugreport@gmail.com, titled "wiica_"+key words.
-
---------------------------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------------------
+=================================================================
 
 Yu Emma Wang
 VLSI-Arch group
 Harvard University
-
 July 26, 2014
 
+References:
+[Weinberg2005] J. Weinberg, M.O. McCracken, E. Strohmaier, and A. Snavely.
+Quantifying Locality in the Memory Access Patterns of HPC Applications, SC, 2005
+[Shao2013] Y.S. Shao and D. Brooks.
+ISA-Independent Workload Characterization and its Implications for Specialized
+Architecture, ISPASS, 2013

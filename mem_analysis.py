@@ -110,8 +110,6 @@ def main(directory, kernel):
 
 
   print '---------------------------'
-  #stride_plot.main(directory, kernel, algorithm)
-  #reuse_plot.main(directory, kernel, algorithm)
 
   results = {"spatial_locality_score": spatial_locality_score,
              "temporal_locality_score": temporal_locality_score}

@@ -4,13 +4,19 @@ import sys
 import operator
 import gzip
 import math
-from collections import defaultdict
-from subprocess import Popen
-from subprocess import PIPE
-from subprocess import STDOUT
-import shlex
 
-def main (directory, kernel, test_file, source, arguments):
+kernels = {
+'bb_gemm' : 'bb_gemm',
+'fft' : 'fft1D_512,step1,step2,step3,step4,step5,step6,step7,step8,step9,step10,step11',
+'md' : 'md,md_kernel',
+'pp_scan' : 'pp_scan,local_scan,sum_scan,last_step_scan',
+'reduction' : 'reduction',
+'ss_sort' : 'ss_sort,init,hist,local_scan,sum_scan,last_step_scan,update',
+'stencil' : 'stencil',
+'triad' : 'triad',
+}
+
+def main (directory, kernel, source, arguments):
  
 
   print "-- LLVM Compilation --" 
@@ -19,13 +25,6 @@ def main (directory, kernel, test_file, source, arguments):
   obj = source + '.llvm'
   opt_obj = source + '-opt.llvm'
   
-  test = test_file
-    
-  if test <> '':
-    test_obj = source + '_test.llvm'
-  else:
-    test_obj = ''
-
   exe = source + '-instrumented'
   source += '.c'
 
@@ -33,11 +32,11 @@ def main (directory, kernel, test_file, source, arguments):
   for arg in arguments:  
     args += arg + ' '
   
+  os.environ['WORKLOAD']=kernels[source]
+  
   os.system('clang -g -O1 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + obj + ' '  + source)
-  if test <> '':
-    os.system('clang -g -O1 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + test_obj + ' '  + test)
   os.system('opt -S -load=' + os.getenv('TRACER_HOME') + '/full-trace/full_trace.so -fulltrace ' + obj + ' -o ' + opt_obj)
-  os.system('llvm-link -o full.llvm ' + opt_obj + ' '+ test_obj+ ' ' + os.getenv('TRACER_HOME') +'/profile-func/trace_logger.llvm')
+  os.system('llvm-link -o full.llvm ' + opt_obj + ' '+ os.getenv('TRACER_HOME') +'/profile-func/trace_logger.llvm')
   os.system('llc -O1 -filetype=obj -o full.o full.llvm')
   os.system('gcc -o ' + exe + ' full.o -lm')
 
@@ -48,7 +47,6 @@ def main (directory, kernel, test_file, source, arguments):
 if __name__ == '__main__':
   directory = sys.argv[1]
   kernel = sys.argv[2]
-  test_file = argv[3]
-  source = sys.argv[4]
-  print directory, kernel, test_file, source
-  main(directory, kernel, test_file, source)
+  source = sys.argv[3]
+  print directory, kernel, source
+  main(directory, kernel, ource)
