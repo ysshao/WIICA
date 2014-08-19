@@ -15,6 +15,7 @@ def run(directory,
 	kernel,
         source,
 	arguments,
+	test,
 	analysis_types):
 
   print 'Running WIICA'
@@ -24,7 +25,7 @@ def run(directory,
   if arguments[0] == 'non':
     arguments = []
 
-  compile.main(directory, kernel, source, arguments)
+  compile.main(directory, kernel, source, arguments, test)
   process_trace.main(directory, kernel)
   inst_results = analysis.main(directory, kernel, analysis_types)
   if 'memory' in analysis_types:
