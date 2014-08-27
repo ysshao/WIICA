@@ -32,12 +32,12 @@ def main (directory, kernel, source, arguments, test):
   for arg in arguments:  
     args += arg + ' '
   
-  os.system('clang -g -O1 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + obj + ' '  + source)
+  os.system('clang -g -O3 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + obj + ' '  + source)
   if test <> '':
-    os.system('clang -g -O1 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + test_obj + ' '  + test)
+    os.system('clang -g -O3 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + test_obj + ' '  + test)
   os.system('opt -S -load=' + os.getenv('TRACER_HOME') + '/full-trace/full_trace.so -fulltrace ' + obj + ' -o ' + opt_obj)
   os.system('llvm-link -o full.llvm ' + opt_obj + ' ' + test_obj + ' ' + os.getenv('TRACER_HOME') +'/profile-func/trace_logger.llvm')
-  os.system('llc -O1 -filetype=obj -o full.o full.llvm')
+  os.system('llc -O3 -filetype=obj -o full.o full.llvm')
   os.system('gcc -o ' + exe + ' full.o -lm')
 
   print './'+ exe + ' ' + args

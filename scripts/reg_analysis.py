@@ -109,7 +109,7 @@ def main(directory, kernel):
 	index = inst - write_register[r]
         sta = write_register[r]
         for i in range(index+1):
-	  if n_register[i+sta+1] > 0:
+	  if n_register[i+sta] > 0:
             n_register[i+sta] -= 1
 
   trace.close()

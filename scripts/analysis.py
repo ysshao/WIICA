@@ -135,17 +135,17 @@ def main (directory, kernel, analyses):
       elif opcode_name == 'Br' and pos_branch_flag == 1:
         if line[0] == '2':
           br_branch_flag = 1
-          target1 = line.split(',')[2].strip('\n')
+          target1 = line.split(',')[4].strip('\n')
 	  br_static_id = static_id
-        elif line[0]  == '3':
-          target2 = line.split(',')[2].strip('\n')
           pos_branch_flag = 0
+        elif line[0]  == '3':
+          target2 = line.split(',')[4].strip('\n')
       elif line[0] == '0' and opcode_name == 'Select':
 	sel_branch_flag = 1
       elif opcode_name == 'Select' and sel_branch_flag == 1:
 	if line[0] == '1':
 	  taken = int(line.split(',')[2].strip('\n'))
-    	  branch_stream[static_id].append(taken)
+	  branch_stream[static_id].append(taken)
           sel_branch_flag = 0
       elif line[0]=='0' and opcode_name == 'Switch':
 	pos_swi_branch_flag =1
@@ -304,7 +304,7 @@ def main (directory, kernel, analyses):
     branch_pattern = {}
     pattern_count = 0
     for key, value in branch_stream.iteritems():
-      #print key, value
+      print key, value
       for i in range(len(value) - 15):
         curr_pattern = ""
         for j in range(16):
