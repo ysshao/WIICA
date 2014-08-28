@@ -132,6 +132,7 @@ def main():
   analysis_types = args.enable.split(",")
  
   for kernel in args.kernels:
+    source = []
     directory = os.environ["BENCH_HOME"] + '/'
     os.environ["WORKLOAD"] = all_kernels[kernel]
     # Some kernels have multiple algorithms implemented, and they are named like
@@ -141,7 +142,7 @@ def main():
       directory += kernel.split('-')[0] +'/'+ kernel.split('-')[1]
       kernel_pri = kernel.split('-')[0]
       algorithm = kernel.split('-')[1] 
-      source = main_kernel_c[kernel]
+      source.append(main_kernel_c[kernel] + '.c')
       
       # compile_script_kernel is kind of a hack to get this batch script to work
       # with compile.py without changing the primary function signature (since
@@ -150,7 +151,7 @@ def main():
       directory += kernel + '/' + kernel
       kernel_pri = kernel
       algorithm = ''
-      source = main_kernel_c[kernel]
+      source.append(main_kernel_c[kernel] + '.c')
 
     for ana in analysis_types:
       if ana == 'all':
@@ -159,7 +160,8 @@ def main():
    
     kernel_pri += '.'+algorithm
     arg = ['input.data', 'check.data']
-    test = BENCH_HOME+'common/harness.c'
+    source.append(BENCH_HOME+'common/harness.c')
+
     print ""
     print "###########################"
     print "     %s" % kernel
@@ -169,7 +171,6 @@ def main():
 	kernel_pri,
 	source,
 	arg,
-	test,
 	analysis_types)
     for result_type in analysis_results.iterkeys():
       if not result_type in full_results:

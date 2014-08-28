@@ -6,7 +6,7 @@ import gzip
 import math
 
 
-def main (directory, kernel, source, arguments, test):
+def main (directory, kernel, source, arguments):
  
   print ''
   print '==========================='
@@ -17,26 +17,33 @@ def main (directory, kernel, source, arguments, test):
   print ''
   
   os.chdir(directory)
-  obj = source + '.llvm'
-  opt_obj = source + '-opt.llvm'
-
-  if test <> '':
-    test_obj = source+'_test.llvm'
-  else:
-    test_obj = ''
-
-  exe = source + '-instrumented'
-  source += '.c'
+  obj = {}
+  opt_obj = {}
+  for s in source:
+    name = s.split('/')[-1].split('.')[0]
+    obj[s] = name + '.llvm'
+    opt_obj[s] = name + '-opt.llvm'
+    print obj[s]
+    print opt_obj[s]
+    
+  exe = kernel.split('.')[-1] + '-instrumented'
   
   args = ''
   for arg in arguments:  
     args += arg + ' '
   
-  os.system('clang -g -O3 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + obj + ' '  + source)
-  if test <> '':
-    os.system('clang -g -O3 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + test_obj + ' '  + test)
-  os.system('opt -S -load=' + os.getenv('TRACER_HOME') + '/full-trace/full_trace.so -fulltrace ' + obj + ' -o ' + opt_obj)
-  os.system('llvm-link -o full.llvm ' + opt_obj + ' ' + test_obj + ' ' + os.getenv('TRACER_HOME') +'/profile-func/trace_logger.llvm')
+  for s in source:
+    os.system('clang -g -O3 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + obj[s] + ' '  + s)
+    os.system('opt -S -load=' + os.getenv('TRACER_HOME') + '/full-trace/full_trace.so -fulltrace ' + obj[s] + ' -o ' + opt_obj[s])
+
+  link = 'llvm-link -o full.llvm '
+  for s in source:
+    link += opt_obj[s] + ' '
+  link += os.getenv('TRACER_HOME') +'/profile-func/trace_logger.llvm'
+
+  print link
+  os.system(link)
+
   os.system('llc -O3 -filetype=obj -o full.o full.llvm')
   os.system('gcc -o ' + exe + ' full.o -lm')
 

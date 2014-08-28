@@ -58,7 +58,6 @@ Related scripts:
 	usage: run_wiica.py [-h] [--directory DIRECTORY] [--kernel KERNEL]
                     [--source SOURCE]
                     [--arguments [ARGUMENTS [ARGUMENTS ...]]]
-                    [--test_file TEST_FILE]
                     [--analysis_types [{opcode,staticinst,memory,branch,basicblock,register} [{opcode,staticinst,memory,branch,basicblock,register} ...]]]
 
 optional arguments:
@@ -67,7 +66,7 @@ optional arguments:
                         ABSOLUTE directory of the benchmark
   --kernel KERNEL       benchmark to analyze. If the benchmark is one of the
                         algorithms of the kernel, use kernel.algorithm instead
-  --source SOURCE       the name of source file, e.g. fft, md, etc.
+  --source SOURCE       a list of source files with suffixes, e.g. fft.c, md.c, etc.
   --arguments [ARGUMENTS [ARGUMENTS ...]]
                         the list of arguments to run the program. If no argument, put "non"
   --analysis_types [{opcode,staticinst,memory,branch,basicblock,register} [{opcode,staticinst,memory,branch,basicblock,register} ...]]
