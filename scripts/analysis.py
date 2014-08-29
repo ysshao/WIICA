@@ -55,7 +55,7 @@ def main (directory, kernel, analyses):
   total_inst_count = 0
   
   if opcode_ana_flag == 1:
-    opcode_counts = np.zeros(len(LLVM_IR.IR_name))
+    opcode_counts = np.zeros(60)
 
   if staticinst_ana_flag == 1:
     static_inst = {}

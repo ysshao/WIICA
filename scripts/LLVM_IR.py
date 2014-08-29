@@ -13,7 +13,7 @@ IR_name = {
 '12':'Mul',
 '13':'FMul',
 '14':'UDiv',
-'15':'UDiv',
+'15':'SDiv',
 '16':'FDiv',
 '17':'URem',
 '18':'SRem',
