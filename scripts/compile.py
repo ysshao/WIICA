@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 import os
 import sys
 import operator
@@ -7,7 +7,7 @@ import math
 
 
 def main (directory, kernel, source, arguments):
- 
+
   print ''
   print '==========================='
   print '     LLVM Compilation      '
@@ -15,7 +15,7 @@ def main (directory, kernel, source, arguments):
   print 'Running compile.main()'
   print 'Compiling: ' + kernel
   print ''
-  
+
   os.chdir(directory)
   obj = {}
   opt_obj = {}
@@ -25,13 +25,13 @@ def main (directory, kernel, source, arguments):
     opt_obj[s] = name + '-opt.llvm'
     print obj[s]
     print opt_obj[s]
-    
+
   exe = kernel.split('.')[-1] + '-instrumented'
-  
+
 #  args = ''
-#  for arg in arguments:  
+#  for arg in arguments:
 #    args += arg + ' '
-  
+
   for s in source:
     os.system('clang -g -O1 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + obj[s] + ' '  + s)
     os.system('opt -S -load=' + os.getenv('TRACER_HOME') + '/full-trace/full_trace.so -fulltrace ' + obj[s] + ' -o ' + opt_obj[s])

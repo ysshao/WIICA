@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 import os
 import sys
 import operator
@@ -11,7 +11,7 @@ import stride_plot
 import reuse_plot
 
 def main(directory, kernel):
-  
+
   print ''
   print '==========================='
   print '     Register Analysis     '
@@ -19,7 +19,7 @@ def main(directory, kernel):
   print 'Running reg_analysis.main()'
   print 'Analyzing: ' + kernel
   print ''
-  
+
 
   BMKROOT = directory
   os.chdir(BMKROOT)
@@ -46,7 +46,7 @@ def main(directory, kernel):
     if line[0] == '0':
       func = line.split(',')[2]
       bbid = line.split(',')[3]
- 
+
       inst += 1
       if inst == 0:
         n_register.append(0)
@@ -61,7 +61,7 @@ def main(directory, kernel):
 	else:
 	  reg_name = line.split(',')[4].strip('\n')
 	if not reg_name in write_register:
-          index = inst 
+          index = inst
         else:
           read_count += 1
 	  read_register[reg_name] = inst
@@ -69,7 +69,7 @@ def main(directory, kernel):
 	if index < 10000:
 	  hist[index] += 1
 
-    #write    
+    #write
     if line[0] == 'r' and line.split(',')[3] == "1":
       write_count += 1
       if line.split(',')[4].strip('\n').isdigit():
@@ -91,7 +91,7 @@ def main(directory, kernel):
 	    n_register[i+sta] -= 1
 
       write_register[reg] = inst
-      n_register[inst] += 1 
+      n_register[inst] += 1
 
   for r in write_register:
     if r in read_register:
@@ -122,7 +122,7 @@ def main(directory, kernel):
   degree.close()
   #PLOT ends
 
-  #print hist   
+  #print hist
   #PLOT begins
   distr = open(BINARY+'_reg_distribution','w')
   for i in hist:
@@ -130,7 +130,7 @@ def main(directory, kernel):
   distr.close()
   #PLOT ends
 
-  #print last_hist   
+  #print last_hist
   #PLOT begins
   distr = open(BINARY+'_reg_lifetime','w')
   for i in last_hist:
@@ -138,7 +138,7 @@ def main(directory, kernel):
   distr.close()
   #PLOT ends
 
-#  print n_register   
+#  print n_register
   #PLOT begins
   distr = open(BINARY+'_reg_number','w')
   for i in n_register:
@@ -146,7 +146,7 @@ def main(directory, kernel):
   distr.close()
   #PLOT ends
 
-  print max(n_register)   
+  print max(n_register)
   #PLOT begins
   distr = open(BINARY+'_reg_maxn','w')
   distr.write('%d\n' % (max(n_register)))

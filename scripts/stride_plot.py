@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 import os
 import numpy as np
 import matplotlib
@@ -11,14 +11,14 @@ color_code = ['#FFA540', '#3BA3D0']
 marker_code = ['o', 's']
 
 def main(directory, kernel, algorithm):
-  
+
   print 'Plotting stride pattern...'
 
   BMKROOT = directory
   os.chdir(BMKROOT)
-  
+
   BINARY=kernel  + '.'+ algorithm + '.cil'
-  
+
   stride_file = open(BINARY + '_stride_profile', 'r')
   s_distribution = []
   for line in stride_file:
@@ -28,7 +28,7 @@ def main(directory, kernel, algorithm):
       prev = s_distribution[-1]
       s_distribution.append(float(line.split(',')[1]) + prev)
   ind = np.arange(len(s_distribution))
-  
+
   fig = plt.figure()
   fig.subplots_adjust(wspace=.5, bottom=.2, left=.12, top=.98, right=.99, hspace=.2)
   currentplot = fig.add_subplot(1, 1, 1)

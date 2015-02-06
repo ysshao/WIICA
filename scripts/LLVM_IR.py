@@ -65,7 +65,3 @@ IR_COND_BRANCH = ['Br', 'Switch', 'Select']
 IR_BRANCH = [item for pair in zip(IR_UNCOND_BRANCH, IR_COND_BRANCH) for item in pair]
 IR_COMPUTE = ['Add' , 'FAdd' , 'Sub' , 'FSub' , 'Mul' , 'FMul' , 'UDiv' , 'SDiv' , 'FDiv' , 'URem' , 'SRem' , 'FRem' , 'Shl' , 'LShr' , 'AShr' , 'And' , 'Or' , 'Xor' , 'ICmp' , 'FCmp']
 IR_MEMORY = ['Load', 'Store', 'AtomitCmpXchg', 'AtomicRMW']
-
-#IR_MOVE_ID = [1,17,18,23]
-#IR_UNCOND_BRANCH_ID = [20,27,28,29,30,41,40,32,33,34,39,43,44,52,54,65,68,69,31]
-#IR_COND_BRANCH_ID = [21 , 22]

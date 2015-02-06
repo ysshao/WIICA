@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 import os
 import numpy as np
 import matplotlib
@@ -11,14 +11,14 @@ color_code = ['#FFA540', '#3BA3D0']
 marker_code = ['o', 's']
 
 def main(directory, kernel, algorithm):
-  
+
   print 'Plotting reuse pattern...'
-  
+
   BMKROOT = directory
   os.chdir(BMKROOT)
-  
+
   BINARY=kernel  + '.'+ algorithm + '.cil'
-  
+
   reuse_file = open(BINARY + '_reuse_profile', 'r')
   t_distribution = []
   for line in reuse_file:
@@ -28,7 +28,7 @@ def main(directory, kernel, algorithm):
       prev = t_distribution[-1]
       t_distribution.append(float(line.split(',')[1]) + prev)
   ind = np.arange(len(t_distribution))
-  
+
   fig = plt.figure()
   fig.subplots_adjust(wspace=.5, bottom=.2, left=.12, top=.98, right=.99, hspace=.2)
   currentplot = fig.add_subplot(1, 1, 1)

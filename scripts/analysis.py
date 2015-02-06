@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 import os
 import sys
 import operator
@@ -19,16 +19,16 @@ def main (directory, kernel, analyses):
   print 'Running analysis.main()'
   print 'Analyzing: ' + str(analyses)
   print ''
-  
+
   BMKROOT = directory
   os.chdir(BMKROOT)
-  
+
   opcode_ana_flag = 0
   staticinst_ana_flag = 0
   mem_ana_flag = 0
   branch_ana_flag = 0
   bblock_ana_flag = 0
-  
+
   # Set up all the output variables.
   branch_entropy = 0
   mem_entropy = 0
@@ -51,15 +51,15 @@ def main (directory, kernel, analyses):
       sys.exit(0)
 
   BINARY=kernel +'.llvm'
-  
+
   total_inst_count = 0
-  
+
   if opcode_ana_flag == 1:
     opcode_counts = np.zeros(60)
 
   if staticinst_ana_flag == 1:
     static_inst = {}
-  
+
   if mem_ana_flag == 1:
     mem_trace_file = gzip.open(BINARY + '_memtrace.gz', 'w')
     addr_counter = {}
@@ -68,12 +68,12 @@ def main (directory, kernel, analyses):
 
   if branch_ana_flag == 1:
     branch_stream = defaultdict(list)
-  
+
   if bblock_ana_flag == 1:
     basic_blocks_size = {}
     basic_blocks_count = {}
     last_basic_block = 'a.1'
-  
+
   dump_file = open(BINARY + '_fulltrace', 'r')
   br_branch_flag = 0
   swi_branch_flag = 0
@@ -89,7 +89,7 @@ def main (directory, kernel, analyses):
       opcode_name = LLVM_IR.IR_name[line.rstrip().split(',')[-2]]
       static_id = method+ '.' + position + '.' + opcode_name
       total_inst_count +=1
-      
+
       #opcode
       if opcode_ana_flag == 1:
         opcode_counts[opcode]+=1
@@ -165,30 +165,30 @@ def main (directory, kernel, analyses):
             #print static_id, taken
             branch_stream[br_static_id].append(taken)
             br_branch_flag = 0
-    
-        if line[0] == '0' and swi_branch_flag == 1:         
+
+        if line[0] == '0' and swi_branch_flag == 1:
             curr_block = line.split(',')[3]
             assert(curr_block in swi_label)
             taken = swi_label[curr_block]
             branch_stream[swi_static_id].append(taken)
             swi_branch_flag=0
-            pos_swi_branch_flag = 0 
+            pos_swi_branch_flag = 0
 
     if mem_ana_flag == 1:
       if mem_flag == 1:
         if opcode_name == 'Load' and line[0] == '1':
             addr = int(line.strip().split(',')[2])
             mem_trace_file.write(str(addr) + ",")
-            mem_accesses += 1   
+            mem_accesses += 1
             if addr in addr_counter:
                 addr_counter[addr]+=1
             else:
                 addr_counter[addr] = 1
         elif opcode_name == 'Store' and line[0] == '2':
-            addr = int(line.strip().split(',')[2])	
-            store_size = int(line.strip().split(',')[1])  
+            addr = int(line.strip().split(',')[2])
+            store_size = int(line.strip().split(',')[1])
             mem_trace_file.write(str(addr) + ",")
-            mem_accesses += 1   
+            mem_accesses += 1
             if addr in addr_counter:
                 addr_counter[addr]+=1
             else:
@@ -196,7 +196,7 @@ def main (directory, kernel, analyses):
             addr_size[addr] = store_size
             mem_trace_file.write(str(store_size) + "\n")
         elif opcode_name == 'Load' and line[0] == 'r':
-            size = int(line.rstrip().split(',')[1]) 
+            size = int(line.rstrip().split(',')[1])
             addr_size[addr] = size
             mem_trace_file.write(str(size) + "\n")
 #	elif opcode_name == 'Store' and line[0] == '1':
@@ -205,7 +205,7 @@ def main (directory, kernel, analyses):
   dump_file.close()
   if mem_ana_flag == 1:
     mem_trace_file.close()
-  
+
   #opcode output:
   if opcode_ana_flag == 1:
     opcode_output = open(BINARY + '_opcode_profile', 'w')
@@ -219,7 +219,7 @@ def main (directory, kernel, analyses):
       if count != 0:
         name = LLVM_IR.IR_name[str(op)]
         print "%s:  %d" % (name, int(count))
-        
+
         if name in LLVM_IR.IR_COMPUTE:
           compute_op += count
         elif name in LLVM_IR.IR_MEMORY:
@@ -236,7 +236,7 @@ def main (directory, kernel, analyses):
 
     opcode_output.write("\n")
     opcode_output.close()
-  
+
   #static instruction
   if staticinst_ana_flag == 1:
     staticinst_output = open(BINARY + '_staticinst_profile', 'w')
@@ -320,9 +320,9 @@ def main (directory, kernel, analyses):
       count = int(w[1])
       p_pattern = count * 1.0 / pattern_count
       branch_entropy = branch_entropy - p_pattern * math.log(p_pattern, 2)
-    
+
     print "Branch entropy: %0.2f" % (branch_entropy)
-     
+
     #PLOT begins
     mementro = open(BINARY+'_branch_entropy','w')
     mementro.write('%0.2f\n' % (branch_entropy))
@@ -338,7 +338,7 @@ def main (directory, kernel, analyses):
       size = basic_blocks_size[key]
       basicblock_output.write('%s,%d,%d,%d\n' %(key, size, count, size * 1.0 / count))
     basicblock_output.close()
-  
+
   results = {"branch_entropy": branch_entropy,
              "mem_entropy": mem_entropy}
   return results

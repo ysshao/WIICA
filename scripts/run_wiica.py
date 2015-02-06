@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 import os
 import sys
 import os.path
@@ -42,7 +42,7 @@ def main():
   parser.add_argument('--kernel', help='benchmark to analyze. If the benchmark is one of the algorithms of the kernel, use kernel.algorithm instead')
   parser.add_argument('--source', help='the name of source file, e.g. fft, md, etc.')
   parser.add_argument('--arguments', help='the list of arguments to run the program', nargs="*")
-  parser.add_argument('--analysis_types', 
+  parser.add_argument('--analysis_types',
       choices=["opcode", "staticinst", "memory", "branch", "basicblock", "register"],
       help='Type of analysis. Separate multiple values with spaces. The '
       'supported analyses are shown.', nargs="*")
@@ -56,9 +56,9 @@ def main():
   source = args.source
   arguments = args.arguments
   ana = args.analysis_types
-  
+
   run(dir, kernel, source, arguments, ana)
 
 if __name__ == '__main__':
   main()
-  
+

@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 import os
 import sys
 import operator
@@ -11,7 +11,7 @@ from collections import defaultdict
 import LLVM_IR
 
 def main (directory, kernel):
- 
+
   print ''
   print '========================'
   print ' Processing LLVM Traces '
@@ -21,7 +21,7 @@ def main (directory, kernel):
 
   BMKROOT = directory
   os.chdir(BMKROOT)
-  BINARY=kernel + '.llvm' 
+  BINARY=kernel + '.llvm'
   dump_file = open(BINARY + '_fulltrace', 'r')
   process_file = open(BINARY + '_fulltrace_afterprocess', 'w')
   call_flag = 0
@@ -30,7 +30,7 @@ def main (directory, kernel):
   for line in dump_file:
     if len(line.split(',')) < 2:
       continue
-  
+
     if line.split(',')[0] == '0':
 
       if call_flag == 1 and store_args_flag == 0:
@@ -67,7 +67,7 @@ def main (directory, kernel):
       arguments.append(line)
 
     if c==5: # start to process the traces
-      
+
       itr_num = (int(arguments[-3].split(',')[2].strip('\n'))*8)/int(arguments[-2].split(',')[1])
       address = int(arguments[-1].split(',')[2].strip('\n'))
 
@@ -92,9 +92,9 @@ def main (directory, kernel):
     if opcode_name <> "Call" and opcode_name <> "BitCast":
         bitcast_flag = 0
 
-  os.system("mv "+BINARY + '_fulltrace_afterprocess '+BINARY+'_fulltrace')  
+  os.system("mv "+BINARY + '_fulltrace_afterprocess '+BINARY+'_fulltrace')
   dump_file.close()
-  process_file.close()        
+  process_file.close()
 
 if __name__ == '__main__':
   directory = sys.argv[1]

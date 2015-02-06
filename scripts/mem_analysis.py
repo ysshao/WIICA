@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 import os
 import sys
 import operator
@@ -11,7 +11,7 @@ import stride_plot
 import reuse_plot
 
 def main(directory, kernel):
-  
+
   print ''
   print '==========================='
   print '      Memory Analysis      '
@@ -22,16 +22,16 @@ def main(directory, kernel):
 
   BMKROOT = directory
   os.chdir(BMKROOT)
-  
+
   BINARY=kernel + '.llvm'
-  
+
   t_histogram = {}
   s_histogram = {}
   for i in range(21):
     value = int(math.pow(2,i))
     t_histogram[value] = 0
     s_histogram[value] = 0
-  #Stride Analysis for Spatial Locality 
+  #Stride Analysis for Spatial Locality
   spatial_locality_score = 0  # Set up output variable.
   addr_id = 0
   past_32 = []
@@ -52,7 +52,7 @@ def main(directory, kernel):
       if stride > 1048576:
         stride = 1048576
       t_histogram[int(math.pow(2,int(math.ceil(math.log(stride, 2)))))] += 1
-      
+
     last_access[addr] = addr_id
 
     #Histogram of stride access
@@ -93,7 +93,7 @@ def main(directory, kernel):
     t_distribution.append(percent)
     temporal_locality_score += percent  * 1.0  * (len(t_histogram) - i ) / len(t_histogram)
   print 'Temporal locality score:\t%0.4f' % (temporal_locality_score)
-  
+
   #PLOT begins
   temlo = open(BINARY+'_temporal_locality','w')
   temlo.write('%0.4f\n' % (temporal_locality_score))
@@ -105,7 +105,7 @@ def main(directory, kernel):
     stride = int(math.pow(2, i))
     stride_output.write("%d,%f\n" %( stride, percent))
   stride_output.close()
-  
+
   reuse_output = open(BINARY + '_reuse_profile', 'w')
   for i, percent in zip(range(len(t_distribution)), t_distribution):
     reuse = int(math.pow(2, i))

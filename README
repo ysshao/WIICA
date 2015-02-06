@@ -1,13 +1,13 @@
 WIICA: Workload ISA-Independent Characterization for Applications
 =================================================================
 WIICA is a workload characterization tool to characterize the ISA-independent
-characteristics of applications in the context of specialized architectures.  
+characteristics of applications in the context of specialized architectures.
 
 If you use WIICA in your research, please cite:
 
 ISA-Independent Workload Characterization and its Implications for Specialized
-Architectures, 
-Yakun Sophia Shao and David Brooks, 
+Architectures,
+Yakun Sophia Shao and David Brooks,
 International Symposium on Performance Analysis of Systems and Software
 (ISPASS), April 2013
 
@@ -19,10 +19,10 @@ International Symposium on Performance Analysis of Systems and Software
    LLVM-Tracer is an LLVM compiler pass that instruments code in LLVM
    machine-independent IR. It prints out a dynamic trace of your program, which
    then be take as input for WIICA (and Aladdin.)
-   
+
    You can download LLVM-Tracer from here:
    [https://github.com/ysshao/LLVM-Tracer]
-   
+
    To build LLVM-Tracer:
    1. Set `LLVM_HOME` to where you installed LLVM
       ```
@@ -43,12 +43,12 @@ International Symposium on Performance Analysis of Systems and Software
 =================================================================
 1. Run WIICA:
 After you build LLVM-Tracer, you need to specify the function names you want to instrument in the programs to run in environment variable WORKLOAD. You can use example SHOC programs in the SHOC
-director to run WIICA. Here we provide all the function names in setenv.sh. 
+director to run WIICA. Here we provide all the function names in setenv.sh.
 
 An example to run wiica is:
   source setenv.sh
   cd scripts
-  python run_wiica.py --directory /your/path/to/wiica/SHOC/fft/ --kernel fft --source fft --arguments non --analysis_types memory 
+  python run_wiica.py --directory /your/path/to/wiica/SHOC/fft/ --kernel fft --source fft --arguments non --analysis_types memory
 
 =================================================================
 
@@ -74,7 +74,7 @@ optional arguments:
                         spaces. The supported analysis types are shown.
 
 2) compile.py
-  Compiling the program with LLVM-Tracer to generate a dynamic LLVM IR trace. 
+  Compiling the program with LLVM-Tracer to generate a dynamic LLVM IR trace.
 
 3) process_trace.py
     For those benchmarks with "llvm.memset" instrinsic. It replaces "llvm.memset" with several non-intrinsic instructions.
@@ -89,8 +89,8 @@ optional arguments:
    BasicBlock: Size and number of dynamic executions of each basic block
 
 5) mem_analysis.py
-   Spatial Locality Score, see [Weinberg2005] for more details. 
-   Temporal Locality Scor, see [Weinberg2005] for more details. 
+   Spatial Locality Score, see [Weinberg2005] for more details.
+   Temporal Locality Scor, see [Weinberg2005] for more details.
 
 6) reg_analysis.py
    Register Degrees: The averarge use of registers, equals to the total number of register read divided by the total number of register write, see [Franklin1992] for more details.
@@ -104,11 +104,11 @@ optional arguments:
 
 	(These files are generated from analysis.py)
 	[bench name]_opcode_profile
-	[bench name]_staticinst_profile 
+	[bench name]_staticinst_profile
 	[bench name]_footprint			Memory footprint
-	[bench name]_mem_entropy		
-	[bench name]_branch_entropy		
-	[bench name]_basicblock_profile		
+	[bench name]_mem_entropy
+	[bench name]_branch_entropy
+	[bench name]_basicblock_profile
 
 	(These files are generated from mem_analysis.py)
 	[bench name]_spatial_locality
@@ -127,7 +127,7 @@ optional arguments:
 4. Feedback
 
 Feel free to email to archbugreport@gmail.com if you have any questions or
-comments. 
+comments.
 
 =================================================================
 
@@ -144,6 +144,6 @@ Quantifying Locality in the Memory Access Patterns of HPC Applications, SC, 2005
 [Shao2013] Y.S. Shao and D. Brooks.
 ISA-Independent Workload Characterization and its Implications for Specialized
 Architecture, ISPASS, 2013
-[Franklin1992] Franklin, M., & Sohi, G. S. 
+[Franklin1992] Franklin, M., & Sohi, G. S.
 Register traffic analysis for streamlining inter-operation communication in fine-grain parallel processors.
 In ACM SIGMICRO Newsletter (Vol. 23, No. 1-2, pp. 236-245). IEEE Computer Society Press, 1992.
