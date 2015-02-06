@@ -85,8 +85,8 @@ def main (directory, kernel, analyses):
       method = line.split(',')[2]
       bblockid = line.split(',')[3]
       position = line.split(',')[4]
-      opcode = int(line.split(',')[-1])
-      opcode_name = LLVM_IR.IR_name[line.rstrip().split(',')[-1]]
+      opcode = int(line.split(',')[-2])
+      opcode_name = LLVM_IR.IR_name[line.rstrip().split(',')[-2]]
       static_id = method+ '.' + position + '.' + opcode_name
       total_inst_count +=1
       
@@ -130,76 +130,75 @@ def main (directory, kernel, analyses):
 
       #branch
     if branch_ana_flag == 1:
-      if line[0] == '0' and opcode_name == 'Br':
-	pos_branch_flag = 1
-      elif opcode_name == 'Br' and pos_branch_flag == 1:
-        if line[0] == '2':
-          br_branch_flag = 1
-          target1 = line.split(',')[4].strip('\n')
-	  br_static_id = static_id
-          pos_branch_flag = 0
-        elif line[0]  == '3':
-          target2 = line.split(',')[4].strip('\n')
-      elif line[0] == '0' and opcode_name == 'Select':
-	sel_branch_flag = 1
-      elif opcode_name == 'Select' and sel_branch_flag == 1:
-	if line[0] == '1':
-	  taken = int(line.split(',')[2].strip('\n'))
-	  branch_stream[static_id].append(taken)
-          sel_branch_flag = 0
-      elif line[0]=='0' and opcode_name == 'Switch':
-	pos_swi_branch_flag =1
-	swi_label = {}
-	swi_static_id = static_id
-      elif opcode_name == 'Switch' and pos_swi_branch_flag == 1:	
-	swi_branch_flag =1
-	if int(line.split(',')[0])%2 == 0:
-	  swi_label[line.split(',')[4].strip('\n')] = int(line.split(',')[0])/2
-	  
-      if line[0] == '0' and br_branch_flag == 1:
-        curr_block = line.split(',')[3].strip('\n')
-        assert(curr_block == target1 or curr_block == target2)
-        if curr_block == target1:
-          taken = 1
-        elif curr_block == target2:
-          taken = 0
-        #print static_id, taken
-        branch_stream[br_static_id].append(taken)
-        br_branch_flag = 0
+        if line[0] == '0' and opcode_name == 'Br':
+            pos_branch_flag = 1
+        elif opcode_name == 'Br' and pos_branch_flag == 1:
+            if line[0] == '2':
+                br_branch_flag = 1
+                target1 = line.split(',')[4].strip('\n')
+                br_static_id = static_id
+                pos_branch_flag = 0
+            elif line[0]  == '3':
+                target2 = line.split(',')[4].strip('\n')
+        elif line[0] == '0' and opcode_name == 'Select':
+            sel_branch_flag = 1
+        elif opcode_name == 'Select' and sel_branch_flag == 1:
+            if line[0] == '1':
+                taken = int(line.split(',')[2].strip('\n'))
+                branch_stream[static_id].append(taken)
+                sel_branch_flag = 0
+        elif line[0]=='0' and opcode_name == 'Switch':
+                pos_swi_branch_flag =1
+                swi_label = {}
+                swi_static_id = static_id
+        elif opcode_name == 'Switch' and pos_swi_branch_flag == 1:
+            swi_branch_flag =1
+            if int(line.split(',')[0])%2 == 0:
+                swi_label[line.split(',')[4].strip('\n')] = int(line.split(',')[0])/2
+        if line[0] == '0' and br_branch_flag == 1:
+            curr_block = line.split(',')[3].strip('\n')
+            assert(curr_block == target1 or curr_block == target2)
+            if curr_block == target1:
+                taken = 1
+            elif curr_block == target2:
+                taken = 0
+            #print static_id, taken
+            branch_stream[br_static_id].append(taken)
+            br_branch_flag = 0
     
-      if line[0] == '0' and swi_branch_flag == 1:     
-	curr_block = line.split(',')[3]
-	assert(curr_block in swi_label)
-	taken = swi_label[curr_block]
-	branch_stream[swi_static_id].append(taken)
-        swi_branch_flag = 0
-	pos_swi_branch_flag = 0 
+        if line[0] == '0' and swi_branch_flag == 1:         
+            curr_block = line.split(',')[3]
+            assert(curr_block in swi_label)
+            taken = swi_label[curr_block]
+            branch_stream[swi_static_id].append(taken)
+            swi_branch_flag=0
+            pos_swi_branch_flag = 0 
 
     if mem_ana_flag == 1:
       if mem_flag == 1:
-	if opcode_name == 'Load' and line[0] == '1':
-          addr = int(line.strip().split(',')[2])
-	  mem_trace_file.write(str(addr) + ",")
-	  mem_accesses += 1   
-	  if addr in addr_counter:
-	    addr_counter[addr]+=1
-	  else:
-	    addr_counter[addr] = 1
-	elif opcode_name == 'Store' and line[0] == '2':
-	  addr = int(line.strip().split(',')[2])	
-	  store_size = int(line.strip().split(',')[1])  
-          mem_trace_file.write(str(addr) + ",")
-          mem_accesses += 1   
-          if addr in addr_counter:
-            addr_counter[addr]+=1
-          else:
-            addr_counter[addr] = 1
-          addr_size[addr] = store_size
-          mem_trace_file.write(str(store_size) + "\n")
+        if opcode_name == 'Load' and line[0] == '1':
+            addr = int(line.strip().split(',')[2])
+            mem_trace_file.write(str(addr) + ",")
+            mem_accesses += 1   
+            if addr in addr_counter:
+                addr_counter[addr]+=1
+            else:
+                addr_counter[addr] = 1
+        elif opcode_name == 'Store' and line[0] == '2':
+            addr = int(line.strip().split(',')[2])	
+            store_size = int(line.strip().split(',')[1])  
+            mem_trace_file.write(str(addr) + ",")
+            mem_accesses += 1   
+            if addr in addr_counter:
+                addr_counter[addr]+=1
+            else:
+                addr_counter[addr] = 1
+            addr_size[addr] = store_size
+            mem_trace_file.write(str(store_size) + "\n")
         elif opcode_name == 'Load' and line[0] == 'r':
-	  size = int(line.rstrip().split(',')[1]) 
-	  addr_size[addr] = size
-          mem_trace_file.write(str(size) + "\n")
+            size = int(line.rstrip().split(',')[1]) 
+            addr_size[addr] = size
+            mem_trace_file.write(str(size) + "\n")
 #	elif opcode_name == 'Store' and line[0] == '1':
 #	  store_size = int(line.rstrip().split(',')[1])
 

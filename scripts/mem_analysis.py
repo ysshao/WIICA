@@ -61,6 +61,7 @@ def main(directory, kernel):
       for item in past_32:
         if math.fabs(item - addr) < stride:
           stride = math.fabs(item-addr)
+          print stride
       if stride != 0:
         s_histogram[int(math.pow(2,int(math.ceil(math.log(stride, 2)))))] += 1
         stride_access += 1
@@ -71,6 +72,9 @@ def main(directory, kernel):
   #Distribution of Stride Accesses
   s_distribution = []
   for i in range(len(s_histogram)):
+    if stride_access == 0:
+        spatial_locality_score = 0
+        break
     percent = s_histogram[int(math.pow(2,i))] * 1.0 / stride_access
     s_distribution.append(percent)
     spatial_locality_score += percent  * 1.0 / int(math.pow(2,i))

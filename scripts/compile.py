@@ -28,13 +28,15 @@ def main (directory, kernel, source, arguments):
     
   exe = kernel.split('.')[-1] + '-instrumented'
   
-  args = ''
-  for arg in arguments:  
-    args += arg + ' '
+#  args = ''
+#  for arg in arguments:  
+#    args += arg + ' '
   
   for s in source:
-    os.system('clang -g -O3 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + obj[s] + ' '  + s)
+    os.system('clang -g -O1 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + obj[s] + ' '  + s)
     os.system('opt -S -load=' + os.getenv('TRACER_HOME') + '/full-trace/full_trace.so -fulltrace ' + obj[s] + ' -o ' + opt_obj[s])
+    print 'clang -g -O1 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + obj[s] + ' '  + s
+    print 'opt -S -load=' + os.getenv('TRACER_HOME') + '/full-trace/full_trace.so -fulltrace ' + obj[s] + ' -o ' + opt_obj[s]
 
   link = 'llvm-link -o full.llvm '
   for s in source:
@@ -44,11 +46,11 @@ def main (directory, kernel, source, arguments):
   print link
   os.system(link)
 
-  os.system('llc -O3 -filetype=obj -o full.o full.llvm')
+  os.system('llc -O1 -filetype=obj -o full.o full.llvm')
   os.system('gcc -o ' + exe + ' full.o -lm')
 
-  print './'+ exe + ' ' + args
-  os.system('./'+ exe + ' ' + args)
+  print './'+ exe + ' ' + arguments
+  os.system('./'+ exe + ' ' + arguments)
   os.system('mv dynamic_trace '+ kernel+'.llvm'+'_fulltrace')
 
 if __name__ == '__main__':

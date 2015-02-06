@@ -159,7 +159,7 @@ def main():
 	break
    
     kernel_pri += '.'+algorithm
-    arg = ['input.data', 'check.data']
+    arg = 'input.data check.data'
     source.append(BENCH_HOME+'common/harness.c')
 
     print ""

@@ -1,0 +1,1 @@
+dynamic_trace is not generatedL:    In compile.py, use O1 instead of O3 in the gcc commands, O3 will inline the functions. 
