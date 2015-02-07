@@ -10,20 +10,20 @@ from collections import defaultdict
 import stride_plot
 import reuse_plot
 
-def main(directory, kernel):
+def main(directory, source):
 
   print ''
   print '==========================='
   print '      Memory Analysis      '
   print '==========================='
   print 'Running mem_analysis.main()'
-  print 'Analyzing: ' + kernel
+  print 'Analyzing: ' + source
   print ''
 
   BMKROOT = directory
   os.chdir(BMKROOT)
 
-  BINARY=kernel + '.llvm'
+  BINARY=source + '.llvm'
 
   t_histogram = {}
   s_histogram = {}
@@ -61,7 +61,6 @@ def main(directory, kernel):
       for item in past_32:
         if math.fabs(item - addr) < stride:
           stride = math.fabs(item-addr)
-          print stride
       if stride != 0:
         s_histogram[int(math.pow(2,int(math.ceil(math.log(stride, 2)))))] += 1
         stride_access += 1
@@ -121,5 +120,5 @@ def main(directory, kernel):
 
 if __name__ == '__main__':
   directory = sys.argv[1]
-  kernel = sys.argv[2]
-  main(directory, kernel)
+  source = sys.argv[2]
+  main(directory, source)

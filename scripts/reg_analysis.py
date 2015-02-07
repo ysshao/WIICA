@@ -10,20 +10,20 @@ from collections import defaultdict
 import stride_plot
 import reuse_plot
 
-def main(directory, kernel):
+def main(directory, source):
 
   print ''
   print '==========================='
   print '     Register Analysis     '
   print '==========================='
   print 'Running reg_analysis.main()'
-  print 'Analyzing: ' + kernel
+  print 'Analyzing: ' + source
   print ''
 
 
   BMKROOT = directory
   os.chdir(BMKROOT)
-  BINARY=kernel + '.llvm'
+  BINARY=source + '.llvm'
   trace = open(BINARY + '_fulltrace', 'r')
   inst = -1
 
@@ -114,8 +114,7 @@ def main(directory, kernel):
 
   trace.close()
 
-  print read_count
-  print write_count
+  print 'Register Degree: %0.4f\n' % (float(read_count)/float(write_count))
   #PLOT begins
   degree = open(BINARY+'_reg_degree','w')
   degree.write('%0.4f\n' % (float(read_count)/float(write_count)))
@@ -146,7 +145,7 @@ def main(directory, kernel):
   distr.close()
   #PLOT ends
 
-  print max(n_register)
+  print "Max number of registers: %d "% max(n_register)
   #PLOT begins
   distr = open(BINARY+'_reg_maxn','w')
   distr.write('%d\n' % (max(n_register)))
@@ -157,6 +156,6 @@ def main(directory, kernel):
 
 if __name__ == '__main__':
   directory = sys.argv[1]
-  kernel = sys.argv[2]
+  source = sys.argv[2]
 
-  main(directory, kernel)
+  main(directory, source)

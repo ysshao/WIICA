@@ -5,59 +5,49 @@ import operator
 import gzip
 import math
 
+kernels = {
+'bb_gemm' : 'bb_gemm',
+'fft' : 'fft1D_512,step1,step2,step3,step4,step5,step6,step7,step8,step9,step10,step11',
+'md' : 'md,md_kernel',
+'pp_scan' : 'pp_scan,local_scan,sum_scan,last_step_scan',
+'reduction' : 'reduction',
+'ss_sort' : 'ss_sort,init,hist,local_scan,sum_scan,last_step_scan,update',
+'stencil' : 'stencil',
+'triad' : 'triad',
+}
 
-def main (directory, kernel, source, arguments):
+def main (directory, source):
 
   print ''
   print '==========================='
   print '     LLVM Compilation      '
   print '==========================='
   print 'Running compile.main()'
-  print 'Compiling: ' + kernel
+  print 'Compiling: ' + source
   print ''
 
   os.chdir(directory)
-  obj = {}
-  opt_obj = {}
-  for s in source:
-    name = s.split('/')[-1].split('.')[0]
-    obj[s] = name + '.llvm'
-    opt_obj[s] = name + '-opt.llvm'
-    print obj[s]
-    print opt_obj[s]
+  obj = source + '.llvm'
+  opt_obj = source + '-opt.llvm'
+  executable = source + '-instrumented'
+  os.environ['WORKLOAD']=kernels[source]
+  source_file = source + '.c'
+  print directory
+  os.system('clang -g -O1 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + obj + ' '  + source_file)
 
-  exe = kernel.split('.')[-1] + '-instrumented'
+  os.system('opt -S -load=' + os.getenv('TRACER_HOME') + '/full-trace/full_trace.so -fulltrace ' + obj + ' -o ' + opt_obj)
 
-#  args = ''
-#  for arg in arguments:
-#    args += arg + ' '
+  os.system('llvm-link -o full.llvm ' + opt_obj + ' ' + os.getenv('TRACER_HOME') + '/profile-func/trace_logger.llvm')
 
-  for s in source:
-    os.system('clang -g -O1 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + obj[s] + ' '  + s)
-    os.system('opt -S -load=' + os.getenv('TRACER_HOME') + '/full-trace/full_trace.so -fulltrace ' + obj[s] + ' -o ' + opt_obj[s])
-    print 'clang -g -O1 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o ' + obj[s] + ' '  + s
-    print 'opt -S -load=' + os.getenv('TRACER_HOME') + '/full-trace/full_trace.so -fulltrace ' + obj[s] + ' -o ' + opt_obj[s]
+  os.system('llc -O0 -disable-fp-elim -filetype=asm -o full.s full.llvm')
 
-  link = 'llvm-link -o full.llvm '
-  for s in source:
-    link += opt_obj[s] + ' '
-  link += os.getenv('TRACER_HOME') +'/profile-func/trace_logger.llvm'
+  os.system('gcc -O0 -fno-inline -o ' + executable + ' full.s -lm')
 
-  print link
-  os.system(link)
+  os.system('./' + executable)
 
-  os.system('llc -O1 -filetype=obj -o full.o full.llvm')
-  os.system('gcc -o ' + exe + ' full.o -lm')
-
-  print './'+ exe + ' ' + arguments
-  os.system('./'+ exe + ' ' + arguments)
-  os.system('mv dynamic_trace '+ kernel+'.llvm'+'_fulltrace')
+  os.system('mv dynamic_trace '+ source+'.llvm'+'_fulltrace')
 
 if __name__ == '__main__':
   directory = sys.argv[1]
-  kernel = sys.argv[2]
-  source = sys.argv[3]
-  arguments = sys.argv[4]
-  test_file = sys.argv[4]
-  print directory, kernel, source, arguments, test_file
-  main(directory, kernel, source, arguments, test_file)
+  source = sys.argv[2]
+  main(directory, source)

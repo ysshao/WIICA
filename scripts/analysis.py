@@ -10,7 +10,7 @@ from collections import defaultdict
 
 import LLVM_IR
 
-def main (directory, kernel, analyses):
+def main (directory, source, analyses):
 
   print ''
   print '========================'
@@ -50,7 +50,7 @@ def main (directory, kernel, analyses):
       print "Unknown analysis type!"
       sys.exit(0)
 
-  BINARY=kernel +'.llvm'
+  BINARY=source +'.llvm'
 
   total_inst_count = 0
 
@@ -303,7 +303,6 @@ def main (directory, kernel, analyses):
     branch_pattern = {}
     pattern_count = 0
     for key, value in branch_stream.iteritems():
-      print key, value
       for i in range(len(value) - 15):
         curr_pattern = ""
         for j in range(16):
@@ -314,7 +313,6 @@ def main (directory, kernel, analyses):
         else:
           branch_pattern[curr_pattern] = 1
 
-    #print branch_pattern
     for w in sorted(branch_pattern.iteritems(), key=operator.itemgetter(1), reverse=True):
       pattern = w[0]
       count = int(w[1])
@@ -344,6 +342,7 @@ def main (directory, kernel, analyses):
   return results
 
 if __name__ == '__main__':
-  kernel = sys.argv[1]
-  analysis_to_do = sys.argv[2]
-  main(kernel, analysis_to_do)
+  directory = sys.argv[1]
+  source = sys.argv[2]
+  analysis_to_do = sys.argv[3]
+  main(directory, source, analysis_to_do)

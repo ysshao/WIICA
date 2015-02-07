@@ -10,7 +10,7 @@ from collections import defaultdict
 
 import LLVM_IR
 
-def main (directory, kernel):
+def main (directory, source):
 
   print ''
   print '========================'
@@ -21,7 +21,7 @@ def main (directory, kernel):
 
   BMKROOT = directory
   os.chdir(BMKROOT)
-  BINARY=kernel + '.llvm'
+  BINARY=source + '.llvm'
   dump_file = open(BINARY + '_fulltrace', 'r')
   process_file = open(BINARY + '_fulltrace_afterprocess', 'w')
   call_flag = 0
@@ -98,6 +98,5 @@ def main (directory, kernel):
 
 if __name__ == '__main__':
   directory = sys.argv[1]
-  kernel = sys.argv[2]
-  algorithm = sys.argv[3]
-  main(directory, kernel, algorithm)
+  source = sys.argv[2]
+  main(directory, source)
