@@ -1,4 +1,6 @@
 WIICA: Workload ISA-Independent Characterization for Applications
+
+v1.0 Public Release
 =================================================================
 WIICA is a workload characterization tool to characterize the ISA-independent
 characteristics of applications in the context of specialized architectures.
