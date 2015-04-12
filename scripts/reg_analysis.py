@@ -7,9 +7,6 @@ import math
 import numpy as np
 from collections import defaultdict
 
-import stride_plot
-import reuse_plot
-
 def main(directory, source):
 
   print ''
@@ -20,21 +17,21 @@ def main(directory, source):
   print 'Analyzing: ' + source
   print ''
 
-
   BMKROOT = directory
   os.chdir(BMKROOT)
-  BINARY=source + '.llvm'
-  trace = open(BINARY + '_fulltrace', 'r')
+  BINARY = source + '.llvm'
+  trace = gzip.open(BINARY + '_fulltrace.gz', 'r')
   inst = -1
 
-#for degree
+# for degree
   read_count = 0
   write_count = 0
-#for dependency distance
+# for dependency distance
   write_register = {}
   read_register = {}
-  hist = []  		#dependence distance (registers are used multiple times)
-  last_hist = []	#lifetime of registers (only count the last access of the register)
+  hist = []  # dependence distance (registers are used multiple times)
+  # lifetime of registers (only count the last access of the register)
+  last_hist = []
   n_register = []
   for i in range(10000):
     hist.append(0)
@@ -51,11 +48,11 @@ def main(directory, source):
       if inst == 0:
         n_register.append(0)
       else:
-        n_register.append(n_register[inst-1])
+        n_register.append(n_register[inst - 1])
 
-    #read
+    # read
     if line[0] <> '0' and line[0] <> 'r':
-      if line.split(',')[3] == "1": #is register
+      if line.split(',')[3] == "1":  # is register
 	if line.split(',')[4].strip('\n').isdigit():
 	  reg_name = func + bbid + line.split(',')[4].strip('\n')
 	else:
@@ -69,7 +66,7 @@ def main(directory, source):
 	if index < 10000:
 	  hist[index] += 1
 
-    #write
+    # write
     if line[0] == 'r' and line.split(',')[3] == "1":
       write_count += 1
       if line.split(',')[4].strip('\n').isdigit():
@@ -84,11 +81,11 @@ def main(directory, source):
         if reg in read_register:
 	  sta = read_register[reg]
           for i in range(inst - sta):
-            n_register[i+sta+1] -= 1
+            n_register[i + sta + 1] -= 1
 	else:
 	  sta = write_register[reg]
 	  for i in range(inst - sta + 1):
-	    n_register[i+sta] -= 1
+	    n_register[i + sta] -= 1
 
       write_register[reg] = inst
       n_register[inst] += 1
@@ -103,54 +100,44 @@ def main(directory, source):
     index = inst - read_register[r]
     sta = read_register[r]
     for i in range(index):
-	if n_register[i+sta+1] > 0:
-	  n_register[i+sta+1] -= 1
+	if n_register[i + sta + 1] > 0:
+	  n_register[i + sta + 1] -= 1
     if write_register[r] > read_register[r]:
 	index = inst - write_register[r]
         sta = write_register[r]
-        for i in range(index+1):
-	  if n_register[i+sta] > 0:
-            n_register[i+sta] -= 1
+        for i in range(index + 1):
+	  if n_register[i + sta] > 0:
+            n_register[i + sta] -= 1
 
   trace.close()
 
-  print 'Register Degree: %0.4f\n' % (float(read_count)/float(write_count))
-  #PLOT begins
-  degree = open(BINARY+'_reg_degree','w')
-  degree.write('%0.4f\n' % (float(read_count)/float(write_count)))
+  print 'Register Degree: %0.4f\n' % (float(read_count) / float(write_count))
+  degree = open(BINARY + '_reg_degree', 'w')
+  degree.write('%0.4f\n' % (float(read_count) / float(write_count)))
   degree.close()
-  #PLOT ends
 
-  #print hist
-  #PLOT begins
-  distr = open(BINARY+'_reg_distribution','w')
+  # print hist
+  distr = open(BINARY + '_reg_distribution', 'w')
   for i in hist:
     distr.write('%d\n' % (i))
   distr.close()
-  #PLOT ends
 
-  #print last_hist
-  #PLOT begins
-  distr = open(BINARY+'_reg_lifetime','w')
+  # print last_hist
+  distr = open(BINARY + '_reg_lifetime', 'w')
   for i in last_hist:
     distr.write('%d\n' % (i))
   distr.close()
-  #PLOT ends
 
-#  print n_register
-  #PLOT begins
-  distr = open(BINARY+'_reg_number','w')
+  # print n_register
+  distr = open(BINARY + '_reg_number', 'w')
   for i in n_register:
     distr.write('%d\n' % (i))
   distr.close()
-  #PLOT ends
 
-  print "Max number of registers: %d "% max(n_register)
-  #PLOT begins
-  distr = open(BINARY+'_reg_maxn','w')
+  print "Max number of registers: %d " % max(n_register)
+  distr = open(BINARY + '_reg_maxn', 'w')
   distr.write('%d\n' % (max(n_register)))
   distr.close()
-  #PLOT ends
   print '---------------------------'
 
 
