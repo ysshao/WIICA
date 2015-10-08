@@ -50,7 +50,7 @@ director to run WIICA. Here we provide all the function names in setenv.sh.
 An example to run wiica is:
   source setenv.sh
   cd scripts
-  python run_wiica.py --directory /your/path/to/wiica/SHOC/fft/ --kernel fft --source fft --arguments non --analysis_types memory
+  python run_wiica.py --directory /your/path/to/wiica/SHOC/fft/ --kernel fft --source fft --analysis_types memory
 
 =================================================================
 
@@ -59,7 +59,6 @@ Related scripts:
 	The interface of wiica.
 	usage: run_wiica.py [-h] [--directory DIRECTORY] [--kernel KERNEL]
                     [--source SOURCE]
-                    [--arguments [ARGUMENTS [ARGUMENTS ...]]]
                     [--analysis_types [{opcode,staticinst,memory,branch,basicblock,register} [{opcode,staticinst,memory,branch,basicblock,register} ...]]]
 
 optional arguments:
@@ -69,8 +68,6 @@ optional arguments:
   --kernel KERNEL       benchmark to analyze. If the benchmark is one of the
                         algorithms of the kernel, use kernel.algorithm instead
   --source SOURCE       a list of source files with suffixes, e.g. fft.c, md.c, etc.
-  --arguments [ARGUMENTS [ARGUMENTS ...]]
-                        the list of arguments to run the program. If no argument, put "non"
   --analysis_types [{opcode,staticinst,memory,branch,basicblock,register} [{opcode,staticinst,memory,branch,basicblock,register} ...]]
                         Type of analysis. Separate multiple values with
                         spaces. The supported analysis types are shown.
