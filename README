@@ -44,11 +44,11 @@ International Symposium on Performance Analysis of Systems and Software
 
 =================================================================
 1. Run WIICA:
-After you build LLVM-Tracer, you need to specify the function names you want to instrument in the programs to run in environment variable WORKLOAD. You can use example SHOC programs in the SHOC
-director to run WIICA. Here we provide all the function names in setenv.sh.
+After you build LLVM-Tracer, you need to specify the function names you want to
+instrument in the programs to run in environment variable WORKLOAD. You can use
+example SHOC programs in the SHOC director to run WIICA.
 
 An example to run wiica is:
-  source setenv.sh
   cd scripts
   python run_wiica.py --directory /your/path/to/wiica/SHOC/fft/ --source fft --analysis_types memory
 
