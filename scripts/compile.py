@@ -7,7 +7,7 @@ import math
 
 kernels = {
 'bb_gemm': 'bb_gemm',
-'fft': 'fft1D_512, step1, step2, step3, step4, step5, step6,step7, step8, step9, step10, step11',
+'fft': 'fft1D_512,step1,step2,step3,step4,step5,step6,step7,step8,step9,step10,step11',
 'md': 'md,md_kernel',
 'pp_scan': 'pp_scan,local_scan,sum_scan,last_step_scan',
 'reduction': 'reduction',

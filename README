@@ -25,28 +25,19 @@ International Symposium on Performance Analysis of Systems and Software
    You can download LLVM-Tracer from here:
    [https://github.com/ysshao/LLVM-Tracer]
 
-   To build LLVM-Tracer:
-   1. Set `LLVM_HOME` to where you installed LLVM
-      ```
-      export LLVM_HOME=/your/path/to/llvm
-      export PATH=$LLVM_HOME/bin/:$PATH
-      export LD_LIBRARY_PATH=$LLVM_HOME/lib/:$LD_LIBRARY_PATH
-      ```
-   2. Go to where you put LLVM-Tracer source code
-
-      ```
-      cd /path/to/LLVM-Tracer
-      cd /path/to/LLVM-Tracer/full-trace
-      make
-      cd /path/to/LLVM-Tracer/profile-func
-      make
-      ```
-
+   To build LLVM-Tracer, please follow the instructions in README.md in
+   LLVM-Tracer.
 =================================================================
 1. Run WIICA:
-After you build LLVM-Tracer, you need to specify the function names you want to
-instrument in the programs to run in environment variable WORKLOAD. You can use
-example SHOC programs in the SHOC director to run WIICA.
+After you build LLVM-Tracer, you need to
+1) Set environment variable TRACER_HOME to /path/to/your/LLVM-Tracer:
+   ```
+   export TRACER_HOME=/path/to/your/LLVM-Tracer/
+   ```
+2) Specify the kernels that you want to instrument. For example, for Benchmark
+FFT, we want to instrument functions: fft1D_512, step1, step2, ..., step11. In
+the `compile.py` script, we already specify all the common functions in SHOC in
+the `kernel` dictionary.
 
 An example to run wiica is:
   cd scripts
@@ -59,14 +50,14 @@ Related scripts:
 	The interface of wiica.
 	usage: run_wiica.py [-h] [--directory DIRECTORY]
                     [--source SOURCE]
-                    [--analysis_types [{opcode,staticinst,memory,branch,basicblock,register} [{opcode,staticinst,memory,branch,basicblock,register} ...]]]
+                    [--analysis_types [{opcode,staticinst,memory,branch,basicblock,register}]]
 
 optional arguments:
   -h, --help            show this help message and exit
   --directory DIRECTORY
                         ABSOLUTE directory of the benchmark
   --source SOURCE       a list of source files with suffixes, e.g. fft.c, md.c, etc.
-  --analysis_types [{opcode,staticinst,memory,branch,basicblock,register} [{opcode,staticinst,memory,branch,basicblock,register} ...]]
+  --analysis_types [{opcode,staticinst,memory,branch,basicblock,register} ]
                         Type of analysis. Separate multiple values with
                         spaces. The supported analysis types are shown.
 
@@ -87,7 +78,7 @@ optional arguments:
 
 5) mem_analysis.py
    Spatial Locality Score, see [Weinberg2005] for more details.
-   Temporal Locality Scor, see [Weinberg2005] for more details.
+   Temporal Locality Score, see [Weinberg2005] for more details.
 
 6) reg_analysis.py
    Register Degrees: The averarge use of registers, equals to the total number of register read divided by the total number of register write, see [Franklin1992] for more details.
@@ -123,7 +114,7 @@ optional arguments:
 =================================================================
 4. Feedback
 
-Feel free to email to archbugreport@gmail.com if you have any questions or
+Feel free to leave us a message on github if you have any questions or
 comments.
 
 =================================================================
